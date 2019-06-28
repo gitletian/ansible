@@ -1,0 +1,12 @@
+---
+- name: drop dns setting
+  lineinfile:
+    path: "{{ eth_path }}/ifcfg-{{ ansible_default_ipv4.alias }}"
+    regexp: "^DNS\\d="
+    state: absent
+
+- name: set dns server
+  lineinfile:
+    path: "{{ eth_path }}/ifcfg-{{ ansible_default_ipv4.alias }}"
+    line: "DNS1={{ dns_host }}"
+    state: present

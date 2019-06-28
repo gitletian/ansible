@@ -1,0 +1,10 @@
+---
+# defaults file for localRepo
+
+# yum 源的主机, 可以是 域名 或 ip:port
+yum_host: yum.marcpoint.com
+yum_repo_path: /etc/yum.repos.d
+
+# 配置本地的 dns 服务器
+dns_host: 172.16.1.230
+eth_path: /etc/sysconfig/network-scripts

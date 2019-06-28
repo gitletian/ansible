@@ -1,0 +1,15 @@
+[local]
+127.0.0.1 ansible_user=guoyuanpei
+
+[test]
+172.16.1.230 ansible_user=root
+
+[test01]
+172.16.1.231 ansible_user=root
+
+[test02]
+172.16.1.232 ansible_user=root
+
+
+[test03]
+172.16.1.233 ansible_user=root

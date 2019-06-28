@@ -1,0 +1,52 @@
+# ansible-playbook -i /root/.ansible/hosts mysql.yml
+---
+- hosts: test03
+  connection: ssh
+  become: yes
+  become_user: root
+  vars:
+    yum_host: yum.marcpoint.com
+    mysql_version: "5.6.15"
+    mysql_root_username: root
+    mysql_root_password: "Mp@3965122"
+    __mysql_version_diff:
+      "5.5":
+        mysql_packages:
+          - MySQL-client
+          - MySQL-server
+          - MySQL-devel
+          - MySQL-shared*
+        mysql_daemon: mysql
+        sql_mode: NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+
+      "5.6":
+        mysql_packages:
+          - MySQL-client
+          - MySQL-server
+          - MySQL-devel
+          - MySQL-shared*
+        mysql_daemon: mysql
+
+      "5.7":
+        mysql_packages:
+          - mysql-community-client
+          - mysql-community-server
+        mysql_daemon: mysqld
+
+      "8.0":
+        mysql_packages:
+          - mysql-community-client
+          - mysql-community-server
+        mysql_daemon: mysqld
+        default_authentication_plugin: mysql_native_password
+
+  tasks:
+    - name: test version
+      set_fact:
+        "{{ item.key }}": "{{ item.value}}"
+      with_dict: "{{ __mysql_version_diff['.'.join(mysql_version.split('.')[:2])] }}"
+
+    - name: debug
+      debug:
+        var: mysql_packages
+...

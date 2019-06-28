@@ -1,0 +1,10 @@
+---
+- name: set yum local repo
+  template:
+    src: "local.repo.j2"
+    dest: "{{ yum_repo_path }}/local.repo"
+    owner: root
+    group: root
+    mode: 0644
+  notify: update yum cache
+

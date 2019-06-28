@@ -1,0 +1,65 @@
+---
+##  获取 & 设置 root 密码
+- block:
+  - name: set root password file
+    set_fact:
+      mysql_tmp_root_password_file: "/{{ mysql_user_home }}/.mysql_secret"
+    when: "'5.6.' in mysql_version"
+
+  - name: read tmp root password
+    shell: grep -E 'temporary password|random password' {{ mysql_tmp_root_password_file }} | tail -1
+    register: root_line
+
+  - name: set tmp root password
+    set_fact:
+      mysql_default_root_password: " --connect-expired-password -p'{{ root_line.stdout_lines[0].split(' ')[-1] }}'"
+    when: "'5.5.' not in mysql_version"
+
+  ##  修改 root@localhost 密码
+  # Note: We do not use mysql_user for this operation, as it doesn't always update
+  # the root password correctly. See: https://goo.gl/MSOejW
+  # Set root password  for MySQL >= 5.7.x.
+  - name: Update MySQL root password for localhost root account (5.7.x).
+    shell: >
+      mysql -u{{ mysql_root_username }} {{mysql_default_root_password}} -NBe
+      "ALTER USER '{{ mysql_root_username }}'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}';"
+    when: ('5.7.' in mysql_version or '8.0.' in mysql_version)
+
+  # Set root password for MySQL < 5.7.x.
+  - name: Update MySQL root password for localhost root account (< 5.7.x).
+    shell: >
+      mysql -u{{ mysql_root_username }} {{mysql_default_root_password}} -NBe
+      "SET PASSWORD FOR '{{ mysql_root_username }}'@'localhost' = PASSWORD('{{ mysql_root_password }}');"
+    when: not ('5.7.' in mysql_version or '8.0.' in mysql_version)
+
+  when: (mysql_install_packages | bool) or mysql_root_password_update
+
+
+# set pass password for root@127.0.0.1  root@::1
+- name: update root password on 127.0.0.1、::1 host
+  mysql_user:
+    name: "{{ mysql_root_username }}"
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    state: present
+    login_user: "{{ mysql_root_username }}"
+    login_password: "{{ mysql_root_password }}"
+  with_items:
+    - "127.0.0.1"
+    - "::1"
+
+##  禁止 root 远程登录 & 删除匿名用户
+- name: Disallow root login remotely & delete Anonymous users
+  command: mysql -u{{ mysql_root_username }} -p'{{mysql_root_password}}' -NBe "{{ item }}"
+  with_items:
+    - DELETE FROM mysql.user WHERE User='{{ mysql_root_username }}' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+    - DELETE FROM mysql.user WHERE User=''
+  changed_when: false
+
+##  删除 test 库
+- name: Remove MySQL test database.
+  mysql_db:
+    name: "test"
+    state: absent
+    login_user: "{{ mysql_root_username }}"
+    login_password: "{{ mysql_root_password }}"

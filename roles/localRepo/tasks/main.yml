@@ -1,0 +1,8 @@
+---
+# tasks file for localRepo
+
+# set dns server
+- include_tasks: dns_setting.yml
+
+# set yum local repo
+- include_tasks: yum_source_setting.yml

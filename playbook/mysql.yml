@@ -1,0 +1,41 @@
+# ansible-playbook -i /root/.ansible/hosts mysql.yml
+---
+- hosts: remote
+  connection: ssh
+  become: yes
+  become_user: root
+  vars:
+    - testvar: test mysql
+#  roles:
+#    - role: geerlingguy.mysql
+  pre_tasks:
+    - name: change DNS address
+      template:
+        src: local.repo.j2
+        dest:
+
+    - name: configure the local yum source
+      yum_repository:
+        baseurl:
+
+      yum:
+        name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Override variables for MySQL (RedHat).
+      set_fact:
+        mysql_daemon: mysqld
+        mysql_packages: ['mysql-server']
+        mysql_log_error: /var/log/mysqld.err
+        mysql_syslog_tag: mysqld
+        mysql_pid_file: /var/run/mysqld/mysqld.pid
+        mysql_socket: /var/lib/mysql/mysql.sock
+      when: ansible_os_family == "RedHat"
+
+  tasks:
+    - name: debug end
+      debug:
+        var: testvar
+
+...

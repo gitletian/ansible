@@ -1,0 +1,28 @@
+---
+- name: Set up the mysql yum source
+  yum_repository:
+    name: mysql
+    baseurl: http://{{ yum_host }}/packages/centos/{{ ansible_distribution_major_version }}/mysql/{{ mysql_version }}
+    description: mysql yum repo source
+    enabled: yes
+    state: present
+  register: yum_repo_install
+
+- name: yum clean cache
+  command: yum clean all
+  when: yum_repo_install.changed
+
+- name: Ensure MySQL packages are installed.
+  yum:
+    name: "{{ mysql_packages }}"
+    state: present
+    enablerepo: "{{ mysql_enablerepo | default(omit, true) }}"
+    update_cache: true
+  register: rh_mysql_install_packages
+
+
+- name: Ensure MySQL Python libraries are installed.
+  yum:
+    name: MySQL-python
+    state: present
+    enablerepo: "{{ mysql_enablerepo | default(omit, true) }}"

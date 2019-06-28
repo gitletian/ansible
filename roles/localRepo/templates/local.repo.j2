@@ -1,0 +1,13 @@
+# alibaba.repo
+[ali]
+name=ali repo
+baseurl=http://{{ yum_host }}/packages/centos/{{ ansible_distribution_major_version }}/ali_rpms
+gpgcheck=0
+enabled=1
+
+# local.repo
+[local]
+name=local  repo
+baseurl=http://{{ yum_host }}/packages/centos/{{ ansible_distribution_major_version }}/local_rpms
+gpgcheck=0
+enabled=1
