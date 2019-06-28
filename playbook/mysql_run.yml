@@ -17,17 +17,17 @@
     - role: localRepo
     - role: mysql
       vars:
-        mysql_version: 5.7.25
+        mysql_version: 8.0.15
 #        mysql_root_password_update: True
-        mysql_character_set_server: utf8
-        mysql_collation_server: utf8_bin
-        mysql_mysql_default_character_set: utf8
-        mysql_client_default_character_set: utf8
+        mysql_character_set_server: utf8mb4
+        mysql_collation_server: utf8mb4_bin
+        mysql_mysql_default_character_set: utf8mb4
+        mysql_client_default_character_set: utf8mb4
 
         mysql_databases:
           - name: kcc
-            encoding: utf8
-            collation: utf8_bin
+            encoding: utf8mb4
+            collation: utf8mb4_bin
 
         mysql_users:
           - name: kcc

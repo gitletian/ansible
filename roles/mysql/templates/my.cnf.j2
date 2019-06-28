@@ -16,8 +16,12 @@ datadir = {{ mysql_datadir }}
 socket = {{ mysql_socket }}
 
 default-storage-engine = {{ mysql_default_storage_engine }}
+
+init_connect = 'SET NAMES {{ mysql_character_set_server }}'
+character-set-client-handshake = FALSE
 character-set-server = {{ mysql_character_set_server }}
 collation-server = {{ mysql_collation_server }}
+
 default-time-zone = {{ mysql_default_time_zone }}
 
 
