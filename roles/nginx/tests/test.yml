@@ -1,0 +1,20 @@
+# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/nginx/tests/test.yml
+---
+- hosts: test03
+  connection: ssh
+  become: yes
+  become_user: root
+
+  roles:
+    - role: nginx
+      vars:
+        nginx_remove_default_vhost: true
+        nginx_vhosts:
+          - listen: 80
+            filename: "test.conf"
+#            server_name: example.com
+            http_root: "/"
+            uwsgi_pass: "127.0.0.1:9090"
+            include: "/etc/nginx/uwsgi_params"
+
+...

@@ -1,0 +1,61 @@
+{% block http_upstream %}
+{% if item.upstream is defined %}
+upstream {{ item.upstream.name }} {
+{% for upstream in item.upstream.servers %}
+    server    {{ upstream.url }}    weight={{ upstream.weight | default(5) }}
+{% endfor %}
+}
+{% endif %}
+{% endblock %}
+
+server {
+    listen    {{ item.listen | default('80') }};
+{% if item.server_name is defined %}
+    server_name {{ item.server_name }};
+{% endif %}
+{% if item.ssl is defined %}
+    ssl_certificate      {{ item.ssl.certificate | default('/etc/nginx/cert.pem') }};
+    ssl_certificate_key  {{ item.ssl.certificate_key | default('/etc/nginx/cert.key') }};
+
+    ssl_session_cache    {{ item.ssl.session_cache | default('shared:SSL:1m') }};
+    ssl_session_timeout  {{ item.ssl.session_timeout | default('5m') }};
+
+    ssl_ciphers          {{ item.ssl.ciphers | default('HIGH:!aNULL:!MD5') }};
+    ssl_prefer_server_ciphers   {{ item.ssl.prefer_server_ciphers | default('on') }};
+{% endif %}
+{% if item.extra_parameters is defined %}
+    {{ item.extra_parameters|indent(4) }}
+{% endif %}
+
+    location {{ http_root | default('/') }} {
+    {% block web_server %}
+    {% if item.root is defined %}
+        root {{ item.root }};
+    {% endif %}
+    {% if item.index is defined %}
+        index {{ item.index }};
+    {% endif %}
+    {% if item.try_files is defined %}
+        try_files {{ item.try_files }};
+    {% endif %}
+    {% endblock %}
+
+    {% block uwsgi_server %}
+    {% if item.uwsgi_pass is defined %}
+        uwsgi_pass {{ item.uwsgi_pass }};
+    {% endif %}
+    {% if item.include is defined %}
+        include {{ item.include }};
+    {% endif %}
+    {% endblock %}
+
+    {% block socket_proxy_server %}
+    {% if item.proxy_pass_url is defined %}
+        proxy_pass {{ item.proxy_pass_url }};
+    {% endif %}
+    {% endblock %}
+    }
+
+}
+
+

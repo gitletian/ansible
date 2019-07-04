@@ -9,12 +9,9 @@
     mysql_version: "5.6.15"
 
   tasks:
-    - name: test version
-      set_fact:
-        "{{ item.key }}": "{{ item.value}}"
-      with_dict: "{{ __mysql_version_diff['.'.join(mysql_version.split('.')[:2])] }}"
-
-    - name: debug
-      debug:
-        var: mysql_packages
+    - name: init python evn
+      command: "ls ./"
+      args:
+        chdir: "/home"
+        creates: "./soft"
 ...

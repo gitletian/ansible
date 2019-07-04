@@ -1,0 +1,11 @@
+# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/mysql/tests/anaconda.yml
+---
+- hosts: test03
+  connection: ssh
+  become: yes
+  become_user: root
+  vars:
+    - testvar: test mysql
+  roles:
+    - role: anaconda
+...

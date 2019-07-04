@@ -1,5 +1,19 @@
+# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/localRepo/tests/test.yml
 ---
-- hosts: localhost
-  remote_user: root
+- hosts: test03
+  connection: ssh
+  become: yes
+  become_user: root
+  vars:
+    - testvar: test mysql
+#  roles:
+#    - role: geerlingguy.mysql
+  pre_tasks:
+    - name: test pre tasks
+      debug:
+        msg: "test pre tasks modul....."
+
   roles:
-    - localRepo
+    - role: localRepo
+
+...

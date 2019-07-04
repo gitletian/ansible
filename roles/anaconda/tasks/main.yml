@@ -1,0 +1,46 @@
+---
+- name: create the soft dir
+  file:
+    path: "{{ soft_dir }}"
+    state: "directory"
+    mode: 0755
+
+- name: set the anaconda home
+  set_fact:
+    anaconda_home: '/root/{{ anaconda_name.split("-")[0] | lower }}'
+
+- name: download anaconda packages sh
+  get_url:
+    url: "http://yum.marcpoint.com/packages/centos/normal/{{ anaconda_name }}"
+    dest: "{{ soft_dir }}"
+    mode: 0755
+
+# conda.compat module is deprecated 需要升级 conda: conda update conda
+- name: install anaconda
+  command: sh {{ anaconda_name }} -b
+  args:
+    chdir: "{{soft_dir}}"
+    creates: "{{ anaconda_home }}"
+
+- name: add anaconda bin to system path
+  lineinfile:
+    path: "/etc/profile"
+    regexp: ':{{ anaconda_home }}/bin$'
+    line: 'export PATH=$PATH:{{ anaconda_home }}/bin'
+    state: present
+
+- name: init python evn
+  command: "bin/conda create -y -n {{item.name}} {{item.version}}"
+  args:
+    chdir: "{{ anaconda_home }}"
+    creates: "envs/{{item.name}}"
+  with_items: "{{ python_env }}"
+
+
+
+
+
+
+
+
+

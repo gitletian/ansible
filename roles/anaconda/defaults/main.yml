@@ -1,0 +1,11 @@
+---
+# defaults file for anaconda
+
+anaconda_name: "Anaconda2-2019.03-Linux-x86_64.sh"
+python_env:
+  - name: "python2.7"
+    version: "python=2.7"
+  - name: "python3.6"
+    version: "python=3.6"
+
+soft_dir: "/home/soft/"
