@@ -1,4 +1,4 @@
-# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/mysql/tests/anaconda.yml
+# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/anaconda/tests/anaconda.yml
 ---
 - hosts: test03
   connection: ssh

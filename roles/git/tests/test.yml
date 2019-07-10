@@ -1,5 +1,17 @@
+# ansible-playbook -i /Users/guoyuanpei/workspace/pworkspace/ansible/hosts /Users/guoyuanpei/workspace/pworkspace/ansible/roles/git/tests/test.yml
 ---
-- hosts: localhost
-  remote_user: root
+- hosts: test03
+  connection: ssh
+  become: yes
+  become_user: root
+  vars:
+    - testvar: test mysql
   roles:
-    - git
+    - role: git_new
+      vars:
+        test: test
+
+
+
+
+...
