@@ -43,6 +43,8 @@ class GitSSH:
         # 登录使 i_like_gogs 生效
         self.headers.update(Cookie='lang={lang}; i_like_gogs={i_like_gogs}; _csrf={_csrf}'.format(**self.cookies))
         data = {'user_name': self.user_name, 'password': self.password, 'login_source': "1", '_csrf': login_csrf}
+        import pdb
+        pdb.set_trace()
         requests.post(url, headers=self.headers, data=data)
 
         # 访问 home 页获取最终 _csrf
@@ -120,11 +122,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # args.username = "yuanpei.guo"
-    # args.password = "dsfdsa"
-    # args.key_text = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCp/Vwt8xWY9xeHNuBIYmtuoZ/l9hFRVuWEdxYdACoAyl7ghjAVrzEakxNhY2/Ut2dEgaBjZHMvHU1gVJXTGhzO2dfHYVYwFlsirXxY3DuoU44VW3mqRerKxWOOGk/iDmAw+R9iLxjG6UVmhbRz5WwI9xpky+nxtLtvY0J3IXT4qVnav2icXTshIWAaIYaY9B0Z+2U99k48D1IOF3aPULqJPPtQaYOHhG7O0+3Eqr699v6M7iKzoMkBBtxzhjTDluoQlDi3izbm8kEYnSoFyxA5HwUInVZ0ku2UiK9rKBDkK/wQ2irSgy6H84ZBWGxJIBdhdwPaAiNKPJwC6S9O0uKr test1'
-    # args.key_name = 'test1'
-    # args.project = "brand_health"
+    args.username = "yuanpei.guo"
+    args.password = "******"
+    args.key_text = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCp/Vwt8xWY9xeHNuBIYmtuoZ/l9hFRVuWEdxYdACoAyl7ghjAVrzEakxNhY2/Ut2dEgaBjZHMvHU1gVJXTGhzO2dfHYVYwFlsirXxY3DuoU44VW3mqRerKxWOOGk/iDmAw+R9iLxjG6UVmhbRz5WwI9xpky+nxtLtvY0J3IXT4qVnav2icXTshIWAaIYaY9B0Z+2U99k48D1IOF3aPULqJPPtQaYOHhG7O0+3Eqr699v6M7iKzoMkBBtxzhjTDluoQlDi3izbm8kEYnSoFyxA5HwUInVZ0ku2UiK9rKBDkK/wQ2irSgy6H84ZBWGxJIBdhdwPaAiNKPJwC6S9O0uKr test1'
+    args.key_name = 'test1'
+    args.project = "brand_health"
 
     gitSsh = GitSSH(args.username, args.password)
     gitSsh.add_key(args.key_name, args.key_text, args.project)

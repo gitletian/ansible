@@ -1,5 +1,5 @@
 [local]
-127.0.0.1 ansible_user=guoyuanpei
+127.0.0.1 ansible_user=guoyuanpei ansible_python_interpreter=/anaconda3/envs/web_test27/bin/python
 
 [test]
 172.16.1.230 ansible_user=root

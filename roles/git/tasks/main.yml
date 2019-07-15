@@ -8,56 +8,33 @@
   until: git_install_git is succeeded
   retries: 3
 
-- name: see if the specified user exists
-  getent:
-    database: passwd
-    key: "{{ git_username }}"
-    fail_key: no
-  when:
-    - git_username is defined
+- name: create repository_destination
+  file:
+    path: "{{ git_repository_destination }}"
+    state: directory
+  when: git_repository_destination is defined
 
-- block:
-  - name: create directory for git configuration
-    file:
-      path: /home/{{ git_username }}
-      state: directory
-      owner: "{{ git_username | default(omit) }}"
-      group: "{{ git_groupname | default(omit) }}"
+# openssh_keypair has a bug bugs, if key already exists and needs to be deleted first。 Modify the source code
+- name: generate pubilc key
+  openssh_keypair:
+    path: ~/.ssh/id_rsa
+    type: rsa
+    force: False
+    state: present
+  register: ssh_keygen
 
-  - name: place git configuration
-    template:
-      src: gitconfig.j2
-      dest: /home/{{ git_username }}/.gitconfig
-    when:
-      - git_user_email is defined
-      - git_user_name is defined
+# tasks file for git
+- name: debug gogs_deploy_key.py
+  gogs_deploy_key:
+    domain: "{{ git_domain }}"
+    api_username: "{{ git_api_username }}"
+    api_password: "{{ git_api_password }}"
+    project: "{{ git_project }}"
+    title: "{{ title }}"
+    key: "{{ ssh_keygen.public_key }}"
+    state: "present"
+  # Delegate local execution gogs_deploy_key, remote python environment is not required
+  # hosts configuration ansible_python_interpreter
+  delegate_to: 127.0.0.1
 
-  - name: create repository_destination
-    file:
-      path: "{{ git_repository_destination }}"
-      state: directory
-      owner: "{{ git_username | default(omit) }}"
-      group: "{{ git_groupname | default(omit) }}"
-    when:
-      - git_repository_destination is defined
-
-  - name: clone all roles
-    git:
-      repo: "{{ item.repo }}"
-      dest: "{{ git_repository_destination }}/{{ item.dest }}"
-      accept_hostkey: yes
-      version: "{{ item.version | default('HEAD') }}"
-      force: "{{ item.force | default(git_force) }}"
-    with_items: "{{ git_repositories }}"
-    become: yes
-    become_user: "{{ git_username }}"
-    when:
-      - git_repositories is defined
-      - git_repository_destination is defined
-    loop_control:
-      label: "{{ item.dest }}"
-
-  when:
-    - git_username is defined
-    - getent_passwd is defined
-    - getent_passwd[git_username] != none
+# git clone data
