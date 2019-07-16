@@ -6,7 +6,7 @@
 # Based on code:
 # Copyright: (c) 2013, Phillip Gentry <phillip@cx.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
+# gogs  的 key 删除添加 机制目前有 bug, 只支持初次添加
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 import pdb
@@ -129,7 +129,6 @@ deploy_key:
 import requests
 from lxml import etree
 
-from ansible.module_utils.api import basic_auth_argument_spec
 from ansible.module_utils.basic import AnsibleModule
 
 
@@ -137,7 +136,7 @@ class GogsDeployKey(object):
     def __init__(self, module, params):
         self._module = module
         self._params = params
-        self.base_url = "http://{}".format(self._params["domain"])
+        self.base_url = self._params["domain"]
         self.headers = {
             "Accept": "application/json, text/javascript, */*; q=0.01",
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',

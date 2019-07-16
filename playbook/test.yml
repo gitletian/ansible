@@ -16,20 +16,11 @@
         type: rsa
         force: False
         state: present
-      register: ssh_key
+        size: 2048
+      register: ssh_keygen
 
     - name: get public_key
       debug:
-        msg: "{{ ssh_key.public_key }}"
+        msg: "{{ ssh_keygen.public_key }}"
 
-#    - name: debug gogs_deploy_key.py
-#      gogs_deploy_key:
-#        domain: "git.marcpoint.com"
-#        api_username: "yuanpei.guo"
-#        api_password: "Mp3965122"
-#        project: "server/brand_health"
-#        title: "test1"
-#        key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA9vAXOR1Qsaot6sZCQ65KJMxXjOAoqjl6ET+XNb4l6ANd9A/gIoHo0BzWj+Pvoc2v80OpIMIfk/tE5ujSN74ii6Ur/VHRgL7KpA11rYmmXon59QcwlEnY65VaTbJbAalb71fvszLayIMC5GGmUwsUaj0fQ+/aJb0jkk8VPKdzPZ3oHnu1vkvvI1nq1XfwCWFQA+HRx3Sgy8drNMmjub/nKAlR9JHqTOzMM5mW39rZWs3LA4XQRAJz20+/hJo07lUGu6EDJBZZAdsznnjTC8lKjxGGTq2CjVRewigQVHzxKv10zuJHmeVgHQkyq5I5FOB5MrS7I4TYK6mpvCD4YW+kZQ== root@virt03"
-#        state: "present"
-#      delegate_to: 127.0.0.1
 ...

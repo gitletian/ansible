@@ -1,29 +1,30 @@
 ---
 # tasks file for git
-- name: install git
-  package:
-    name: "{{ git_packages }}"
-    state: present
-  register: git_install_git
-  until: git_install_git is succeeded
-  retries: 3
-
-- name: create repository_destination
-  file:
-    path: "{{ git_repository_destination }}"
-    state: directory
-  when: git_repository_destination is defined
+#- name: install git
+#  package:
+#    name: "{{ git_packages }}"
+#    state: present
+#  register: git_install_git
+#  until: git_install_git is succeeded
+#  retries: 3
+#
+#- name: create repository_destination
+#  file:
+#    path: "{{ git_repository_destination }}"
+#    state: directory
+#  when: git_repository_destination is defined
 
 # openssh_keypair has a bug bugs, if key already exists and needs to be deleted first。 Modify the source code
-- name: generate pubilc key
-  openssh_keypair:
-    path: ~/.ssh/id_rsa
-    type: rsa
-    force: False
-    state: present
-  register: ssh_keygen
+#- name: generate pubilc key
+#  openssh_keypair:
+#    path: ~/.ssh/id_rsa
+#    type: rsa
+#    size: 2048
+#    force: False
+#    state: present
+#  register: ssh_keygen
 
-# tasks file for git
+# upload project ssh-key to gogs
 - name: debug gogs_deploy_key.py
   gogs_deploy_key:
     domain: "{{ git_domain }}"
@@ -31,10 +32,17 @@
     api_password: "{{ git_api_password }}"
     project: "{{ git_project }}"
     title: "{{ title }}"
-    key: "{{ ssh_keygen.public_key }}"
+#    key: "{{ ssh_keygen.public_key }}"
+    key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwBQyYIbvjyeyfZxI7Hvmkntv9OjyKfz/wEPnKOYSicDrIcLB4Mhl3e981VU63iY+g2Zqc+wGQXFCr1EjXGp0r++9aj0UOjQEGioUG/+TNvd9PisRrb1s0enhpp981qKHipkh+UHIkJE6tSxtmw36FPiAexPOMS5iM7dgsVTZd4P2z729GLzfpNCfqNu5bO4rUtQMPmBWhoiBZzgcMKOyaHjQ5A/4Dwco+wN/sIqqtd/6ttaIR2C+28gGcswvf30qf6jd47Rxp1h13GVXYQaHqL6C2TYT3FGdJ2E3ChFrXXtH6k4Oi+PyK/Mc3nttK+/KHW4S5B6Hgj1Z2+7zR4o6xQ=="
     state: "present"
   # Delegate local execution gogs_deploy_key, remote python environment is not required
   # hosts configuration ansible_python_interpreter
   delegate_to: 127.0.0.1
 
 # git clone data
+- name: git clone project
+  git:
+    dest: "{{ git_repository_destination }}/brand_health"
+    clone: "yes"
+    repo: "git@git.marcpoint.com:server/brand_health.git"
+

@@ -7,9 +7,9 @@
   vars:
     - testvar: test mysql
   roles:
-    - role: git_new
+    - role: git
       vars:
-        test: test
+        test: "{{ testvar }}"
 
 
 
